@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.0">
+    </script>
+    <link rel="stylesheet" href="css/quiz.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+    </script>
+<body>
+    <!--container-->
+<section class="container">
+	<!--questionBox-->
+	<div class="questionBox" id="app">
+
+		<!-- transition -->
+		<transition :duration="{ enter: 500, leave: 300 }" enter-active-class="animated zoomIn" leave-active-class="animated zoomOut" mode="out-in">
+
+			<!--qusetionContainer-->
+			<div class="questionContainer" v-if="questionIndex<quiz.length" v-bind:key="questionIndex">
+
+				<header>
+					<h1 class="title is-6">Quiz</h1>
+					<!--progress-->
+					<div class="progressContainer">
+						<progress class="progress is-info is-small" :value="(questionIndex/quiz.length)*100" max="100">{{(questionIndex/quiz.length)*100}}%</progress>
+						<p>{{questionIndex+1 }} / {{quiz.length}}</p>
+					</div>
+					<!--/progress-->
+				</header>
+
+				<!-- questionTitle -->
+				<h2 class="titleContainer title">{{ quiz[questionIndex].text }}</h2>
+
+				<!-- quizOptions -->
+				<div class="optionContainer">
+					<div class="option" v-for="(response, index) in quiz[questionIndex].responses" @click="selectOption(index)" :class="{ 'is-selected': userResponses[questionIndex] == index}" :key="index">
+						{{ index | charIndex }}. {{ response.text }}
+					</div>
+				</div>
+
+				<!--quizFooter: navigation and progress-->
+				<footer class="questionFooter">
+
+					<!--pagination-->
+					<nav class="pagination" role="navigation" aria-label="pagination">
+
+						<!-- back button -->
+						<a class="button" v-on:click="prev();" :disabled="questionIndex < 1">
+                    Back
+                  </a>
+
+						<!-- next button -->
+						<a class="button" :class="(userResponses[questionIndex]==null)?'':'is-active'" v-on:click="next();" :disabled="questionIndex>=quiz.length">
+                    {{ (userResponses[questionIndex]==null)?'Skip':'Next' }}
+                  </a>
+
+					</nav>
+					<!--/pagination-->
+
+				</footer>
+				<!--/quizFooter-->
+
+			</div>
+			<!--/questionContainer-->
+
+			<!--quizCompletedResult-->
+			<div v-if="questionIndex >= quiz.length" v-bind:key="questionIndex" class="quizCompleted has-text-centered">
+
+				<!-- quizCompletedIcon: Achievement Icon -->
+				<span class="icon">
+                <i class="fa" :class="score()>3?'fa-check-circle-o is-active':'fa-times-circle'"></i>
+              </span>
+
+				<!--resultTitleBlock-->
+				<h2 class="title">
+					You did {{ (score()>7?'an amazing':(score()<4?'a poor':'a good')) }} job!
+				</h2>
+				<p class="subtitle">
+					Total score: {{ score() }} / {{ quiz.length }}
+				</p>
+					<br>
+					<a class="button" @click="restart()">restart <i class="fa fa-refresh"></i></a>
+				<!--/resultTitleBlock-->
+
+			</div>
+			<!--/quizCompetedResult-->
+
+		</transition>
+
+	</div>
+	<!--/questionBox-->
+
+</section>
+<!--/container-->    
+<script src="js/quiz.js"></script>
+</body>
+</html>
